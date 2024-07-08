@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "name": "owner",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "title",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "data",
+      "public": false,
+      "type": "field"
+    }
+  ],
+  "output": {
+    "type": "array",
+    "components": {
+      "size": 2,
+      "type": "field"
+    }
+  }
+}

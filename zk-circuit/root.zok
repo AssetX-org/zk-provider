@@ -1,0 +1,10 @@
+import "hashes/sha256/512bitPacked" as sha256packed;
+
+def main(public field owner, public field title, private field data) -> field[2] {
+    field[2] computed_hash1 = sha256packed([owner, title, 0, 0]);
+    field[2] computed_hash2 = sha256packed([data, 0, 0, 0]);
+    
+    field[2] nullifier = sha256packed([computed_hash1[0], computed_hash1[1], computed_hash2[0], computed_hash2[1]]);
+
+    return nullifier;
+}

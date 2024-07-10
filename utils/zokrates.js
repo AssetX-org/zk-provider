@@ -20,7 +20,7 @@ function stringToHex(str) {
 let zk = null;
 let artifacts = null;
 let provingKey = null;
-
+let verifyingKey = null;
 function base64ToUint8Array(base64String) {
   const binaryString = atob(base64String);
   const length = binaryString.length;
@@ -42,6 +42,14 @@ async function initializeZok() {
       provingKey = base64ToUint8Array(
         readFileSync("zk-circuit/proving.key").toString("base64")
       );
+
+      verifyingKey = JSON.parse(
+        readFileSync("zk-circuit/verification.key", "utf-8")
+      );
+
+      console.log(typeof verifyingKey);
+
+      // console.log(verifyingKey);
 
       console.log("Initialized Zokrates.");
     } catch (error) {
@@ -71,6 +79,20 @@ export async function ProofGen(owner, title, data) {
     const proof = zk.generateProof(artifacts.program, out.witness, provingKey);
 
     return proof;
+  } catch (error) {
+    console.error("Error processing request:", error);
+    throw error;
+  }
+}
+
+export async function VerifyProof(proof) {
+  if (!zk) {
+    await initializeZok();
+  }
+  try {
+    const result = zk.verify(verifyingKey, proof);
+    console.log("Verification result:", result);
+    return result;
   } catch (error) {
     console.error("Error processing request:", error);
     throw error;

@@ -1,5 +1,23 @@
 import app from "./app.js";
-import serverless from "serverless-http";
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResultV2,
+  Handler,
+} from "aws-lambda";
 
-// Adapt Express app for AWS Lambda
-export const handler = serverless(app);
+export const handler: Handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResultV2> => {
+  try {
+    const result = await app(event);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Internal Server Error" }),
+    };
+  }
+};

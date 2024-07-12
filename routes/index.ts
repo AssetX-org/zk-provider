@@ -4,6 +4,7 @@ import {
   updateTrustedSetup,
   VerifyProof,
 } from "../utils/zokrates.js";
+
 var router = express.Router();
 
 router.get("/", (req, res) => {

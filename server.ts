@@ -1,12 +1,5 @@
 import app from "./app.js";
 import serverless from "serverless-http";
 
+// Adapt Express app for AWS Lambda
 export const handler = serverless(app);
-
-const startServer = async () => {
-  app.listen(3000, () => {
-    console.log("listening on port 3000!");
-  });
-};
-
-startServer();

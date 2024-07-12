@@ -4,11 +4,17 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
+import cors from "cors";
+import morgan from "morgan";
 
 import indexRouter from "./routes/index.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+
+app.use(cors());
+app.use(morgan("combined"));
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 

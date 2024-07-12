@@ -5,3 +5,5 @@ out
 *.key
 *.wtns
 .env
+deploy.zip
+dist

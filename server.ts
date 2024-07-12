@@ -1,7 +1,12 @@
 import app from "./app.js";
+import serverless from "serverless-http";
 
-const port = process.env.PORT || 3000;
+export const handler = serverless(app);
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
+const startServer = async () => {
+  app.listen(3000, () => {
+    console.log("listening on port 3000!");
+  });
+};
+
+startServer();

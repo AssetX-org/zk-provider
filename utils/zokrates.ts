@@ -4,7 +4,7 @@ import {
   initialize,
   ZoKratesProvider,
 } from "zokrates-js";
-import { readFileSync } from "fs";
+import { readFileSync, promises as fs } from "fs";
 
 function hashString(inputString, hashLength) {
   const hash = crypto.createHash("sha256");
@@ -25,6 +25,7 @@ let zk: ZoKratesProvider | null = null;
 let artifacts: CompilationArtifacts;
 let provingKey: Uint8Array;
 let verifyingKey = null;
+
 function base64ToUint8Array(base64String) {
   const binaryString = atob(base64String);
   const length = binaryString.length;
@@ -35,6 +36,29 @@ function base64ToUint8Array(base64String) {
   return uint8Array;
 }
 
+export async function updateTrustedSetup() {
+  zk = await initialize();
+  const source = readFileSync("zk-circuit/root.zok", "utf-8");
+  const compiled = zk.compile(source);
+
+  const setUpKeypair = zk.setup(compiled.program);
+
+  try {
+    await fs.writeFile("zk-circuit/proving.key", setUpKeypair.pk);
+
+    const jsonData = JSON.stringify(setUpKeypair.vk, null, 2);
+
+    await fs.writeFile("zk-circuit/verification.key", jsonData);
+
+    console.log("File written successfully");
+  } catch (error) {
+    console.error("Error writing file:", error);
+  }
+  console.log("Setup keypair:", setUpKeypair);
+
+  return true;
+}
+
 async function initializeZok() {
   if (!zk) {
     zk = await initialize();
@@ -42,9 +66,7 @@ async function initializeZok() {
       const source = readFileSync("zk-circuit/root.zok", "utf-8");
       artifacts = zk.compile(source);
 
-      provingKey = base64ToUint8Array(
-        readFileSync("zk-circuit/proving.key").toString("base64")
-      );
+      provingKey = readFileSync("zk-circuit/proving.key");
 
       verifyingKey = JSON.parse(
         readFileSync("zk-circuit/verification.key", "utf-8")

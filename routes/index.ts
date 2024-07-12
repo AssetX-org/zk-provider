@@ -1,18 +1,29 @@
 import express from "express";
-import { ProofGen, VerifyProof } from "../utils/zokrates.js";
+import {
+  ProofGen,
+  updateTrustedSetup,
+  VerifyProof,
+} from "../utils/zokrates.js";
 var router = express.Router();
 
 router.get("/", (req, res) => {
   res.render("index.ejs");
 });
+
+router.get("/update-trusted-setup", async (req, res) => {
+  console.log("Updating trusted setup...");
+  await updateTrustedSetup();
+  console.log("Updating trusted setup 2...");
+
+  res.json({ message: "Trusted setup updated" });
+});
+
 router.post("/proof-gen", async (req, res) => {
   try {
     const { owner, title, data } = req.body;
 
-    console.log(owner, title, data);
-    console.log("body:", req.body);
     const proof = await ProofGen(owner, title, data);
-    console.log("Gen Proof:", proof);
+
     res.json({ proof });
   } catch (error) {
     console.error("Error generating proof:", error);

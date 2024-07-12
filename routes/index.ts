@@ -7,7 +7,7 @@ import {
 
 var router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/health", (req, res) => {
   res.render("index.ejs");
 });
 

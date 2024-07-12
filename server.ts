@@ -1,23 +1,19 @@
-import app from "./app.js";
+import app from "./app";
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResultV2,
   Handler,
 } from "aws-lambda";
+import serverless from "serverless-http";
 
-export const handler: Handler = async (
-  event: APIGatewayProxyEvent
+const serverlessApp = serverless(app);
+
+export const handler: Handler<
+  APIGatewayProxyEvent,
+  APIGatewayProxyResultV2
+> = async (
+  event: APIGatewayProxyEvent,
+  context
 ): Promise<APIGatewayProxyResultV2> => {
-  try {
-    const result = await app(event);
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error }),
-    };
-  }
+  return await serverlessApp(event, context);
 };

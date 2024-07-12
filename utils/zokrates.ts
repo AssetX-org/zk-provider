@@ -1,5 +1,9 @@
 import * as crypto from "crypto";
-import { initialize } from "zokrates-js";
+import {
+  CompilationArtifacts,
+  initialize,
+  ZoKratesProvider,
+} from "zokrates-js";
 import { readFileSync } from "fs";
 
 function hashString(inputString, hashLength) {
@@ -17,9 +21,9 @@ function stringToHex(str) {
   return hex;
 }
 
-let zk = null;
-let artifacts = null;
-let provingKey = null;
+let zk: ZoKratesProvider | null = null;
+let artifacts: CompilationArtifacts;
+let provingKey: Uint8Array;
 let verifyingKey = null;
 function base64ToUint8Array(base64String) {
   const binaryString = atob(base64String);
@@ -34,7 +38,6 @@ function base64ToUint8Array(base64String) {
 async function initializeZok() {
   if (!zk) {
     zk = await initialize();
-
     try {
       const source = readFileSync("zk-circuit/root.zok", "utf-8");
       artifacts = zk.compile(source);
@@ -47,9 +50,7 @@ async function initializeZok() {
         readFileSync("zk-circuit/verification.key", "utf-8")
       );
 
-      console.log(typeof verifyingKey);
-
-      // console.log(verifyingKey);
+      console.log("Type:", typeof verifyingKey);
 
       console.log("Initialized Zokrates.");
     } catch (error) {
@@ -68,13 +69,13 @@ export async function ProofGen(owner, title, data) {
     const hashedTitle = stringToHex(hashString(title, 16));
     const hashedData = stringToHex(hashString(data || "", 16));
 
-    const out = zk.computeWitness(artifacts, [
+    const out = zk.computeWitness(artifacts!, [
       hashedOwner,
       hashedTitle,
       hashedData,
     ]);
     console.log("Computed witness:", out.witness);
-    console.log("artifact:", artifacts.program);
+    console.log("artifact:", artifacts!.program);
     console.log("provingKey:", provingKey);
     const proof = zk.generateProof(artifacts.program, out.witness, provingKey);
 
@@ -86,15 +87,16 @@ export async function ProofGen(owner, title, data) {
 }
 
 export async function VerifyProof(proof) {
-  if (!zk) {
+  if (zk && verifyingKey) {
     await initializeZok();
-  }
-  try {
-    const result = zk.verify(verifyingKey, proof);
-    console.log("Verification result:", result);
-    return result;
-  } catch (error) {
-    console.error("Error processing request:", error);
-    throw error;
+
+    try {
+      const result = zk.verify(verifyingKey, proof);
+      console.log("Verification result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error processing request:", error);
+      throw error;
+    }
   }
 }

@@ -12,7 +12,7 @@ router.post("/proof-gen", async (req, res) => {
     console.log(owner, title, data);
     console.log("body:", req.body);
     const proof = await ProofGen(owner, title, data);
-    console.log(proof);
+    console.log("Gen Proof:", proof);
     res.json({ proof });
   } catch (error) {
     console.error("Error generating proof:", error);

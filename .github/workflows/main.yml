@@ -25,6 +25,6 @@ jobs:
         run: npm ci
       - name: Deploy
         run: |
-          npx ncc build server.ts
+          npx ncc build index.ts
           zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name=lambda-assetX --zip-file=fileb://deploy.zip

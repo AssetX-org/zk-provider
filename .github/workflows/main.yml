@@ -19,12 +19,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
-      - name: Install Dependancies
-        env:
-          CI: true
-        run: npm ci
-      - name: Deploy
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npx tsc
+
+      - name: Package Deployment
         run: |
-          npx ncc build index.ts
-          zip -j deploy.zip ./dist/*
-          aws lambda update-function-code --function-name=lambda-assetX --zip-file=fileb://deploy.zip
+          zip -r deploy.zip dist/*
+
+      - name: Deploy to AWS Lambda
+        run: aws lambda update-function-code --function-name lambda-assetX --zip-file fileb://deploy.zip

@@ -8,7 +8,7 @@ import {
 var router = express.Router();
 
 router.get("/health", (req, res) => {
-  res.render("index.ejs");
+  res.json({ message: "API Health Okay" });
 });
 
 router.get("/update-trusted-setup", async (req, res) => {

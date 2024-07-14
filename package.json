@@ -16,15 +16,12 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "serverless-http": "^3.2.0",
     "typescript": "^5.5.3",
     "zokrates-js": "^1.1.9"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.141",
     "@types/node": "^20.14.10",
-    "@vercel/ncc": "^0.38.1",
-    "esbuild-register": "^3.5.0",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"

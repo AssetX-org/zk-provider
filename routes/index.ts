@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  ProofGen,
-  updateTrustedSetup,
-  VerifyProof,
-} from "../utils/zokrates.js";
+import { callProofGen } from "../utils/invoke-lambda-zk.js";
 
 var router = express.Router();
 
@@ -11,19 +7,11 @@ router.get("/health", (req, res) => {
   res.json({ message: "API Health Okay" });
 });
 
-router.get("/update-trusted-setup", async (req, res) => {
-  console.log("Updating trusted setup...");
-  await updateTrustedSetup();
-  console.log("Updating trusted setup 2...");
-
-  res.json({ message: "Trusted setup updated" });
-});
-
 router.post("/proof-gen", async (req, res) => {
   try {
     const { owner, title, data } = req.body;
 
-    const proof = await ProofGen(owner, title, data);
+    const proof = await callProofGen({ owner, title, data });
 
     res.json({ proof });
   } catch (error) {
@@ -32,17 +20,17 @@ router.post("/proof-gen", async (req, res) => {
   }
 });
 
-router.post("/verify", async (req, res) => {
-  try {
-    const { proof } = req.body;
+// router.post("/verify", async (req, res) => {
+//   try {
+//     const { proof } = req.body;
 
-    const result = await VerifyProof(proof);
-    console.log(result);
-    res.json({ result });
-  } catch (error) {
-    console.error("Error Verifying Proof:", error);
-    res.status(500).json({ error: "Failed to Verifying Proof" });
-  }
-});
+//     const result = await VerifyProof(proof);
+//     console.log(result);
+//     res.json({ result });
+//   } catch (error) {
+//     console.error("Error Verifying Proof:", error);
+//     res.status(500).json({ error: "Failed to Verifying Proof" });
+//   }
+// });
 
 export default router;

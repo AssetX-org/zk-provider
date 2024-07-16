@@ -1,5 +1,5 @@
 import express from "express";
-import { callProofGen } from "../utils/invoke-lambda-zk.js";
+import { callProofGen, callVerification } from "../utils/invoke-lambda-zk.js";
 
 var router = express.Router();
 
@@ -20,17 +20,17 @@ router.post("/proof-gen", async (req, res) => {
   }
 });
 
-// router.post("/verify", async (req, res) => {
-//   try {
-//     const { proof } = req.body;
+router.post("/verify", async (req, res) => {
+  try {
+    const { proof } = req.body;
 
-//     const result = await VerifyProof(proof);
-//     console.log(result);
-//     res.json({ result });
-//   } catch (error) {
-//     console.error("Error Verifying Proof:", error);
-//     res.status(500).json({ error: "Failed to Verifying Proof" });
-//   }
-// });
+    const result = await callVerification(proof);
+    console.log(result);
+    res.json({ result });
+  } catch (error) {
+    console.error("Error Verifying Proof:", error);
+    res.status(500).json({ error: "Failed to Verifying Proof" });
+  }
+});
 
 export default router;

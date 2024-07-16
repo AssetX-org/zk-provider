@@ -28,3 +28,18 @@ export const callProofGen = async ({ owner, title, data }) => {
     throw error;
   }
 };
+
+export const callVerification = async (proof) => {
+  const params = {
+    FunctionName: "verification-lambda-function",
+    Payload: proof,
+  };
+
+  try {
+    const data = await lambda.invoke(params).promise();
+    return JSON.parse(data.Payload.toString());
+  } catch (error) {
+    console.error("Error calling Lambda function:", error);
+    throw error;
+  }
+};
